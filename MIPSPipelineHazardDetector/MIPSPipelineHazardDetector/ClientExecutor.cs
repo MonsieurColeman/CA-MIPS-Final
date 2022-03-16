@@ -14,9 +14,38 @@ namespace MIPSPipelineHazardDetector
 		{
 		}
 
-		public void Foo()
+		public string RunApplication(List<InstructionCommand> commands)
         {
+			string dependencies = DetermineDependencies(commands);
+			string timingNF = DeterimineTiming(commands);
+			string timingF = DeterimineTimingWithForwarding(commands);
 
+			//TODO later : dummy output
+			return commands.ToString();
+        }
+
+		private string DetermineDependencies(List<InstructionCommand> commands)
+		{
+			
+			return "";
+        }
+
+		private string DeterimineTiming(List<InstructionCommand> commands)
+		{
+
+			return "";
+		}
+
+		private string DeterimineTimingWithForwarding(List<InstructionCommand> commands)
+		{
+
+			return "";
+		}
+
+		private string Foo()
+        {
+			
+			return "";
         }
 	}
 }

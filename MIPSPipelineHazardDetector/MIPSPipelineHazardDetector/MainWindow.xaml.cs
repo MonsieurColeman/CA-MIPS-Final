@@ -27,6 +27,7 @@ namespace MIPSPipelineHazardDetector
         {
             
             InitializeComponent();
+            exec = new ClientExec();
         }
 
         private void btn_new_Click(object sender, RoutedEventArgs e)
@@ -50,20 +51,29 @@ namespace MIPSPipelineHazardDetector
 
             //Read text from file
             string fileContent = FileManager.ReadTextFile(sFilenames);
-            (bool, dynamic) instructionList = InstructionConverter.StringInstructionConverter(fileContent);
+            (bool, List<InstructionCommand>, bool) instructionList = InstructionConverter.StringInstructionConverter(fileContent);
 
-            //Give to fileManager | returns true if file is valid
+            //Give to fileManager | returns true if file is invalid
             if (!instructionList.Item1)
+            {
                 MessageBox.Show(Strings.error_InvalidFile);
+                output_textblock.Text = "";
+                return;
+            }
+            else if (instructionList.Item3)
+                MessageBox.Show(Strings.error_UnrecognizedArguments);
             else
-                exec.Foo();
+                output_textblock = exec.RunApplication(instructionList.Item2); //placeholder: todo
+
+            //placeholder: todo
+            //output_textblock = exec.RunApplication(instructionList.Item2);
         }
 
         private void btn_export_Click(object sender, RoutedEventArgs e)
         {
 
             //null check for trying to export empty objects
-            if ("ToDo" == null)
+            if (output_textblock.Text == "")
             {
                 MessageBox.Show(Strings.error_NullExport);
                 return;
@@ -73,8 +83,7 @@ namespace MIPSPipelineHazardDetector
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = Strings.textFileExtensionFilter;
             if (saveFileDialog.ShowDialog() == true)
-                FileManager.WriteOutputToTextFile("ToDO", saveFileDialog.FileName);
-
+                FileManager.WriteOutputToTextFile(output_textblock.Text, saveFileDialog.FileName);
         }
 
         private void btn_exitApp_Click(object sender, RoutedEventArgs e)

@@ -28,17 +28,11 @@ namespace MIPSPipelineHazardDetector
         }
 
 
-        public static void WriteOutputToTextFile(dynamic JSONString, string fileName)
-        {
-            //ToDo
-        }
-
-        public static void WriteJSONStringToText(string JSONString, string fileName)
-        { /*
-         * print json object string to file */
+        public static void WriteOutputToTextFile(dynamic outputString, string fileName)
+        { /*prints a given string to a given text file*/
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, fileName)))
-                outputFile.WriteLine(JSONString);
+                outputFile.WriteLine(outputString);
         }
     }
 }
