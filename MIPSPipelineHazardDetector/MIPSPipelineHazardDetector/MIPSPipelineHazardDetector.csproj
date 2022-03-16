@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Pipeline.cs" />
     <Compile Include="GlobalLanguageEntries.cs" />
     <Compile Include="InstructionConverter.cs" />
     <Compile Include="Strings.cs" />
