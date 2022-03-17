@@ -63,7 +63,7 @@ namespace MIPSPipelineHazardDetector
             else if (instructionList.Item3)
                 MessageBox.Show(Strings.error_UnrecognizedArguments);
             else
-                output_textblock = exec.RunApplication(instructionList.Item2); //placeholder: todo
+                output_textblock.Text = exec.RunApplication(instructionList.Item2); //placeholder: todo
 
             //placeholder: todo
             //output_textblock = exec.RunApplication(instructionList.Item2);

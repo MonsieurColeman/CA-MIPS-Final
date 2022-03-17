@@ -121,7 +121,7 @@ namespace MIPSPipelineHazardDetector
         bool rTypeImmediateFlag_;
         int shamt_;
 
-        public InstructionCommand(Instruction i, Register rs, Register rt = null, Register rd = null,
+        public InstructionCommand(Instruction i, Register rs = null, Register rt = null, Register rd = null,
             int immediate = 0, bool rTypeImmediateFlag = false, int wordAddress = 0, int shamt = 0)
         {
             inst_ = i;
@@ -133,6 +133,48 @@ namespace MIPSPipelineHazardDetector
             wordAddress_ = wordAddress;
             rTypeImmediateFlag_ = rTypeImmediateFlag;
             shamt_ = shamt;
+        }
+
+        public override string ToString()
+        { //convert back to input syntax
+            string returnStr = "";
+            switch (type_)
+            {
+
+                case InstructionType.rType:
+                    if (rTypeImmediateFlag_)
+                        returnStr =
+                            inst_.ToString() + " " +
+                            rs_.ToString() + ", " +
+                            rt_.ToString() + ", " +
+                            immediate_.ToString();
+                    else
+                        returnStr =
+                            inst_.ToString() + " " +
+                            rs_.ToString() + ", " +
+                            rt_.ToString() + ", " +
+                            rd_.ToString();
+                    break;
+                case InstructionType.iType:
+                    returnStr =
+                        inst_.ToString() + " " +
+                        rs_.ToString() + ", " +
+                        immediate_.ToString() +
+                        "(" + rt_.ToString() + ")";
+                    break;
+                case InstructionType.stall:
+                    returnStr = "stall";
+                    break;
+                default:
+                    returnStr = base.ToString();
+                    break;
+            }
+            return returnStr;
+        }
+
+        public static InstructionCommand Stall()
+        {
+            return new InstructionCommand(Instruction.Stall());
         }
     }
 }

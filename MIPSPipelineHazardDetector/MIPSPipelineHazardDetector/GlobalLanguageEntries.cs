@@ -39,9 +39,14 @@ namespace MIPSPipelineHazardDetector
         {
             value = i;
         }
+
+        public override string ToString()
+        {
+            return key;
+        }
     }
 
-    public enum InstructionType { rType, iType, jType }
+    public enum InstructionType { rType, iType, jType, stall }
 
     public struct Instruction
     {
@@ -93,6 +98,15 @@ namespace MIPSPipelineHazardDetector
             return funct;
         }
 
+        public static Instruction Stall()
+        {
+            return new Instruction(Globals.command0, Globals.stall_binary, InstructionType.stall);
+        }
+
+        public override string ToString()
+        {
+            return key;
+        }
     }
 
     public static class Globals
@@ -130,6 +144,7 @@ namespace MIPSPipelineHazardDetector
         public static readonly string register30 = "$fp";
         public static readonly string register31 = "$ra";
 
+        public static readonly string command0 = "stall";
         public static readonly string command1 = "add";
         public static readonly string command2 = "sub";
         public static readonly string command3 = "lw";
@@ -147,6 +162,7 @@ namespace MIPSPipelineHazardDetector
         public static readonly string sub_binary = "100010";
         public static readonly string lw_binary = "100011";
         public static readonly string sw_binary = "101011";
+        public static readonly string stall_binary = "111111";
 
         public static string memory0 = "0000000000";
         public static string memory1 = "0000000000";
@@ -168,6 +184,7 @@ namespace MIPSPipelineHazardDetector
         };
 
         public static Dictionary<string, Instruction> instructionDictionary = new Dictionary<string, Instruction>() {
+        { command0, new Instruction(command0, stall_binary, InstructionType.stall) }, //func
         { command1, new Instruction(command1, add_binary, InstructionType.rType) }, //func
         { command2, new Instruction(command2, sub_binary, InstructionType.rType) }, //func
         { command3, new Instruction(command3, lw_binary, InstructionType.iType) }, //load
