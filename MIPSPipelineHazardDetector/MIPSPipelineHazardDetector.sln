@@ -5,6 +5,11 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIPSPipelineHazardDetector", "MIPSPipelineHazardDetector\MIPSPipelineHazardDetector.csproj", "{4E89D452-6B2B-4E86-9BBE-4680FA4BA8E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MIPSPipelineHazardDetector.UnitTests", "MIPSPipelineHazardDetector.UnitTests\MIPSPipelineHazardDetector.UnitTests.csproj", "{3E532C5C-9AB5-45C5-8486-7E0204D60B81}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E89D452-6B2B-4E86-9BBE-4680FA4BA8E6} = {4E89D452-6B2B-4E86-9BBE-4680FA4BA8E6}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +20,10 @@ Global
 		{4E89D452-6B2B-4E86-9BBE-4680FA4BA8E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E89D452-6B2B-4E86-9BBE-4680FA4BA8E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E89D452-6B2B-4E86-9BBE-4680FA4BA8E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E532C5C-9AB5-45C5-8486-7E0204D60B81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E532C5C-9AB5-45C5-8486-7E0204D60B81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E532C5C-9AB5-45C5-8486-7E0204D60B81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E532C5C-9AB5-45C5-8486-7E0204D60B81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,12 @@ namespace MIPSPipelineHazardDetector
         static Stack<InstructionCommand> MemoryStack = new Stack<InstructionCommand>();
         static Stack<InstructionCommand> WritebackStack = new Stack<InstructionCommand>();
         public string __state = "";
+        public bool __forwardingEnabled = false;
+
+        public Pipeline(bool forwarding)
+        {
+            __forwardingEnabled = forwarding;
+        }
 
         public void StartPipelineWithCommand(InstructionCommand command)
         {
@@ -32,11 +38,13 @@ namespace MIPSPipelineHazardDetector
 
         public void AddCommandToPipline(InstructionCommand command)
         {
-            /*
-            int stallcycle = DependencyCheckNoForwarding(command); //incomplete
-            if (stallcycle > 0)
-                AdvancePipelineByXCycles(stallcycle);
-            */
+
+            if (PipelineDependencyChecker.HazardChecker(command, fetchStack.Peek()))
+            {
+                int stall = 0;
+                stall = PipelineDependencyChecker.StallDeterminer(__forwardingEnabled, command.inst_, fetchStack.Peek().inst_);
+                AdvancePipelineByXCycles(stall);
+            }
             NextCycle();
             fetchStack.Push(command);
             //NextCycle();
@@ -107,7 +115,11 @@ namespace MIPSPipelineHazardDetector
         private void AdvancePipelineByXCycles(int num)
         {
             for (int i = 0; i < num; i++)
+            {
                 NextCycle();
+                StateOfPipeline();
+            }
+
         }
 
         private int DependencyCheckNoForwarding(InstructionCommand command)

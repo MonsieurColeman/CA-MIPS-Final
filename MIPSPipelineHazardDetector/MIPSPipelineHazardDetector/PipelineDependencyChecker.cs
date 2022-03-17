@@ -16,20 +16,77 @@ namespace MIPSPipelineHazardDetector
          * w = 8,9,10 for beg, middle, end
          */
 
-        public static int StallDeterminer(bool forwarding, InstructionCommand newCommand, InstructionCommand command)
+        public static bool HazardChecker(InstructionCommand newCommand, InstructionCommand command)
+        {
+            bool hazardExists = false;
+
+            /*
+            //if both are rtypes without immediates, we check registers
+            if (command.inst_.GetInstructionType() == InstructionType.rType
+                && newCommand.inst_.GetInstructionType() == InstructionType.rType 
+                && !newCommand.rTypeImmediateFlag_)
+                if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_)
+                    return true;
+
+            //if the new command has an immediate, we check the destination with the new commands rt
+            if (command.inst_.GetInstructionType() == InstructionType.rType
+                && newCommand.inst_.GetInstructionType() == InstructionType.rType
+                && newCommand.rTypeImmediateFlag_)
+                if (command.rs_ == newCommand.rt_)
+                    return true;
+
+            //if the new command has an immediate, we check the destination with the new commands rt
+            if (command.inst_.GetInstructionType() == InstructionType.iType
+                && newCommand.inst_.GetInstructionType() == InstructionType.rType
+                && newCommand.rTypeImmediateFlag_)
+                if (command.rs_ == newCommand.rt_)
+                    return true;
+
+            if (command.inst_.GetInstructionType() == InstructionType.rType && newCommand.inst_.GetInstructionType() == InstructionType.rType && !command.rTypeImmediateFlag_ && !newCommand.rTypeImmediateFlag_)
+            {
+                if (newCommand.rs_ == command.rt_ || newCommand.rs_ == command.rd_)
+                    return true;
+            }
+            else if (newCommand.rTypeImmediateFlag_ && command.rTypeImmediateFlag_)
+            else if (command.inst_.GetInstructionType() == InstructionType.rType)
+            {
+
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            if (newCommand.rs_ == command.rt_ || newCommand.rs_ == command.rd_)
+            */
+
+            if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_)
+                return true;
+
+
+            return hazardExists;
+        }
+
+
+
+        public static int StallDeterminer(bool forwarding, Instruction newCommand, Instruction command, int offset = 1)
         {
             int stalls = 0;
 
             //item 1 = tuple timing for when data is needed, item 2 = tuple timing for when data is available
-            ((int, int), (int, int)) needyCommandTuple = InstructionComparer(forwarding, newCommand.inst_);
-            ((int, int), (int, int)) usingCommandTuple = InstructionComparer(forwarding, command.inst_);
+            ((int, int), (int, int)) needyCommandTuple_temp = InstructionComparer(forwarding, newCommand);
+            ((int, int), (int, int)) usingCommandTuple = InstructionComparer(forwarding, command);
+
+            //Add the offset to the timing, because two instructions cannot start at the same time within a pipeline
+            ((int, int), (int, int)) needyCommandTuple = 
+                ((needyCommandTuple_temp.Item1.Item1+1, needyCommandTuple_temp.Item1.Item2),
+                (needyCommandTuple_temp.Item2.Item1, needyCommandTuple_temp.Item2.Item2));
 
             //if the data will be available before, or when, the next command needs it, we do not need to stall
             if ((needyCommandTuple.Item1.Item1 > usingCommandTuple.Item2.Item1) || (needyCommandTuple.Item1 == needyCommandTuple.Item2))
                 return 0;
             
             //stalls = when data is avilable - when data is needed
-            stalls = usingCommandTuple.Item1.Item1 - needyCommandTuple.Item1.Item1;
+            stalls = usingCommandTuple.Item2.Item1 - needyCommandTuple.Item1.Item1;
 
             //if the first command needs data at the beginning of the stage
             //but the data cant become available until the end, add 1 stall

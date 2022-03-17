@@ -16,7 +16,7 @@ namespace MIPSPipelineHazardDetector
 
 		public string RunApplication(List<InstructionCommand> commands)
         {
-			Pipeline p = new Pipeline();
+			Pipeline p = new Pipeline(false);
 			Queue<InstructionCommand> queue = new Queue<InstructionCommand>();
 
 			//put commands into an execution queue
@@ -31,10 +31,6 @@ namespace MIPSPipelineHazardDetector
 			for (int i = 0; i < maxIter; i++)
 				p.AddCommandToPipline(queue.Dequeue());
 
-			//string dependencies = DetermineDependencies(commands);
-			//string timingNF = DeterimineTiming(commands);
-			//string timingF = DeterimineTimingWithForwarding(commands);
-			
 			//Output the state of the pipeline to the user
 			return p.__state;
         }
