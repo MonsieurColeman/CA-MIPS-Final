@@ -18,17 +18,24 @@ namespace MIPSPipelineHazardDetector
         {
 			Pipeline p = new Pipeline();
 			Queue<InstructionCommand> queue = new Queue<InstructionCommand>();
+
+			//put commands into an execution queue
 			foreach (InstructionCommand command in commands)
 				queue.Enqueue(command);
+
+			//put the first intruction into the pipeline
 			p.StartPipelineWithCommand(queue.Dequeue());
+
+			//run the intructions in the queue through the pipeline
 			int maxIter = queue.Count;
 			for (int i = 0; i < maxIter; i++)
 				p.AddCommandToPipline(queue.Dequeue());
+
 			//string dependencies = DetermineDependencies(commands);
 			//string timingNF = DeterimineTiming(commands);
 			//string timingF = DeterimineTimingWithForwarding(commands);
 			
-			//TODO later : dummy output
+			//Output the state of the pipeline to the user
 			return p.__state;
         }
 

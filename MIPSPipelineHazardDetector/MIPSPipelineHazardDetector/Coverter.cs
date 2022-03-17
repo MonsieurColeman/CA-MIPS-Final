@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MIPSPipelineHazardDetector
 {
-    public static class InstructionConverter
+    public static class Coverter
     {
         public static (bool, List<InstructionCommand>, bool) StringInstructionConverter(string stringInput)
         {
@@ -98,7 +98,7 @@ namespace MIPSPipelineHazardDetector
             return command;
         }
 
-        public static string StringCleaner(string s)
+        private static string StringCleaner(string s)
         {
             s = s.Replace(",", "");
             s = s.Replace("(", " ");
@@ -109,72 +109,4 @@ namespace MIPSPipelineHazardDetector
        
     }
 
-    public struct InstructionCommand
-    {
-        Instruction inst_;
-        InstructionType type_;
-        Register rs_;
-        Register rt_;
-        Register rd_;
-        int immediate_;
-        int wordAddress_;
-        bool rTypeImmediateFlag_;
-        int shamt_;
-
-        public InstructionCommand(Instruction i, Register rs = null, Register rt = null, Register rd = null,
-            int immediate = 0, bool rTypeImmediateFlag = false, int wordAddress = 0, int shamt = 0)
-        {
-            inst_ = i;
-            type_ = i.GetInstructionType();
-            rs_ = rs;
-            rt_ = rt;
-            rd_ = rd;
-            immediate_ = immediate;
-            wordAddress_ = wordAddress;
-            rTypeImmediateFlag_ = rTypeImmediateFlag;
-            shamt_ = shamt;
-        }
-
-        public override string ToString()
-        { //convert back to input syntax
-            string returnStr = "";
-            switch (type_)
-            {
-
-                case InstructionType.rType:
-                    if (rTypeImmediateFlag_)
-                        returnStr =
-                            inst_.ToString() + " " +
-                            rs_.ToString() + ", " +
-                            rt_.ToString() + ", " +
-                            immediate_.ToString();
-                    else
-                        returnStr =
-                            inst_.ToString() + " " +
-                            rs_.ToString() + ", " +
-                            rt_.ToString() + ", " +
-                            rd_.ToString();
-                    break;
-                case InstructionType.iType:
-                    returnStr =
-                        inst_.ToString() + " " +
-                        rs_.ToString() + ", " +
-                        immediate_.ToString() +
-                        "(" + rt_.ToString() + ")";
-                    break;
-                case InstructionType.stall:
-                    returnStr = "stall";
-                    break;
-                default:
-                    returnStr = base.ToString();
-                    break;
-            }
-            return returnStr;
-        }
-
-        public static InstructionCommand Stall()
-        {
-            return new InstructionCommand(Instruction.Stall());
-        }
-    }
 }

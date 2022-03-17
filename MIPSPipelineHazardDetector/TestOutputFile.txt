@@ -1,1 +1,255 @@
-System.Collections.Generic.List`1[MIPSPipelineHazardDetector.InstructionCommand]
+
+This is the start of the Pipeline
+
+This is the state of the pipeline at cycle 1:
+Fetch: lw $s0, 0($t2)
+Decode: empty
+Execute: empty
+Memory: empty
+WriteBack empty
+
+----------
+
+This is the state of the pipeline at cycle 2:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: empty
+Memory: empty
+WriteBack empty
+
+----------
+
+This is the state of the pipeline at cycle 3:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: empty
+WriteBack empty
+
+----------
+
+This is the state of the pipeline at cycle 4:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack empty
+
+----------
+
+This is the state of the pipeline at cycle 5:
+Fetch: lw $s0, 0($t2)
+Decode: sw $v0, 0($t0)
+Execute: add $s0, $s0, $t4
+Memory: add $t0, $t0, 1
+WriteBack lw $s0, 0($t2)
+
+----------
+
+This is the state of the pipeline at cycle 6:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: sw $v0, 0($t0)
+Memory: add $s0, $s0, $t4
+WriteBack add $t0, $t0, 1
+
+----------
+
+This is the state of the pipeline at cycle 7:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: sw $v0, 0($t0)
+WriteBack add $s0, $s0, $t4
+
+----------
+
+This is the state of the pipeline at cycle 8:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack sw $v0, 0($t0)
+
+----------
+
+This is the state of the pipeline at cycle 9:
+Fetch: lw $s0, 0($t2)
+Decode: sw $v0, 0($t0)
+Execute: add $s0, $s0, $t4
+Memory: add $t0, $t0, 1
+WriteBack lw $s0, 0($t2)
+
+----------
+
+This is the state of the pipeline at cycle 10:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: sw $v0, 0($t0)
+Memory: add $s0, $s0, $t4
+WriteBack add $t0, $t0, 1
+
+----------
+
+This is the state of the pipeline at cycle 11:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: sw $v0, 0($t0)
+WriteBack add $s0, $s0, $t4
+
+----------
+
+This is the state of the pipeline at cycle 12:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack sw $v0, 0($t0)
+
+----------
+
+This is the state of the pipeline at cycle 13:
+Fetch: lw $s0, 0($t2)
+Decode: sw $v0, 0($t0)
+Execute: add $s0, $s0, $t4
+Memory: add $t0, $t0, 1
+WriteBack lw $s0, 0($t2)
+
+----------
+
+This is the state of the pipeline at cycle 14:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: sw $v0, 0($t0)
+Memory: add $s0, $s0, $t4
+WriteBack add $t0, $t0, 1
+
+----------
+
+This is the state of the pipeline at cycle 15:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: sw $v0, 0($t0)
+WriteBack add $s0, $s0, $t4
+
+----------
+
+This is the state of the pipeline at cycle 16:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack sw $v0, 0($t0)
+
+----------
+
+This is the state of the pipeline at cycle 17:
+Fetch: lw $s0, 0($t2)
+Decode: sw $v0, 0($t0)
+Execute: add $s0, $s0, $t4
+Memory: add $t0, $t0, 1
+WriteBack lw $s0, 0($t2)
+
+----------
+
+This is the state of the pipeline at cycle 18:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: sw $v0, 0($t0)
+Memory: add $s0, $s0, $t4
+WriteBack add $t0, $t0, 1
+
+----------
+
+This is the state of the pipeline at cycle 19:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: sw $v0, 0($t0)
+WriteBack add $s0, $s0, $t4
+
+----------
+
+This is the state of the pipeline at cycle 20:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack sw $v0, 0($t0)
+
+----------
+
+This is the state of the pipeline at cycle 21:
+Fetch: lw $s0, 0($t2)
+Decode: sw $v0, 0($t0)
+Execute: add $s0, $s0, $t4
+Memory: add $t0, $t0, 1
+WriteBack lw $s0, 0($t2)
+
+----------
+
+This is the state of the pipeline at cycle 22:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: sw $v0, 0($t0)
+Memory: add $s0, $s0, $t4
+WriteBack add $t0, $t0, 1
+
+----------
+
+This is the state of the pipeline at cycle 23:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: sw $v0, 0($t0)
+WriteBack add $s0, $s0, $t4
+
+----------
+
+This is the state of the pipeline at cycle 24:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack sw $v0, 0($t0)
+
+----------
+
+This is the state of the pipeline at cycle 25:
+Fetch: lw $s0, 0($t2)
+Decode: sw $v0, 0($t0)
+Execute: add $s0, $s0, $t4
+Memory: add $t0, $t0, 1
+WriteBack lw $s0, 0($t2)
+
+----------
+
+This is the state of the pipeline at cycle 26:
+Fetch: add $t0, $t0, 1
+Decode: lw $s0, 0($t2)
+Execute: sw $v0, 0($t0)
+Memory: add $s0, $s0, $t4
+WriteBack add $t0, $t0, 1
+
+----------
+
+This is the state of the pipeline at cycle 27:
+Fetch: add $s0, $s0, $t4
+Decode: add $t0, $t0, 1
+Execute: lw $s0, 0($t2)
+Memory: sw $v0, 0($t0)
+WriteBack add $s0, $s0, $t4
+
+----------
+
+This is the state of the pipeline at cycle 28:
+Fetch: sw $v0, 0($t0)
+Decode: add $s0, $s0, $t4
+Execute: add $t0, $t0, 1
+Memory: lw $s0, 0($t2)
+WriteBack sw $v0, 0($t0)
+
+----------
+

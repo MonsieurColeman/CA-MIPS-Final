@@ -13,5 +13,7 @@ namespace MIPSPipelineHazardDetector
         public static readonly string error_NullExport = "There has to be something for you to export!";
         public static readonly string error_UnexpectedError = "An unexpected error has occured!";
         public static readonly string error_UnrecognizedArguments = "Unrecognized commands have been entered and ignored!";
+        public static readonly string outputText_stall = "stall";
+        public static readonly string outputText_empty = "empty";
     }
 }

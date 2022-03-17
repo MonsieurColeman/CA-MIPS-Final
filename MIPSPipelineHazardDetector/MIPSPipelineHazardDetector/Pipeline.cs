@@ -8,6 +8,11 @@ namespace MIPSPipelineHazardDetector
 {
     public class Pipeline
     {
+        /*
+         Honestly, i could implement this with just a queue instead of 5 stacks, but ,,, time 
+         is of the essence
+         */
+
         static int cycle = 0;
         static Stack<InstructionCommand> fetchStack = new Stack<InstructionCommand>();
         static Stack<InstructionCommand> DecodeStack = new Stack<InstructionCommand>();
@@ -122,15 +127,23 @@ namespace MIPSPipelineHazardDetector
 
         private void StateOfPipeline()
         {
-            InstructionCommand IF = (fetchStack.Count > 0) ? fetchStack.Peek() : InstructionCommand.Stall();
-            InstructionCommand ID = (DecodeStack.Count > 0) ? DecodeStack.Peek() : InstructionCommand.Stall();
-            InstructionCommand X = (ExecuteStack.Count > 0) ? ExecuteStack.Peek() : InstructionCommand.Stall();
-            InstructionCommand M = (MemoryStack.Count > 0) ? MemoryStack.Peek() : InstructionCommand.Stall();
-            InstructionCommand W = (WritebackStack.Count > 0) ? WritebackStack.Peek() : InstructionCommand.Stall();
+            string IF = (fetchStack.Count > 0) ? fetchStack.Peek().ToString() : InstructionCommand.Stall().ToString();
+            string ID = (DecodeStack.Count > 0) ? DecodeStack.Peek().ToString() : InstructionCommand.Stall().ToString();
+            string X = (ExecuteStack.Count > 0) ? ExecuteStack.Peek().ToString() : InstructionCommand.Stall().ToString();
+            string M = (MemoryStack.Count > 0) ? MemoryStack.Peek().ToString() : InstructionCommand.Stall().ToString();
+            string W = (WritebackStack.Count > 0) ? WritebackStack.Peek().ToString() : InstructionCommand.Stall().ToString();
 
+            if(cycle < 6) //bad logic to change later
+            {
+                IF = (IF == Strings.outputText_stall) ? Strings.outputText_empty : IF;
+                ID = (ID == Strings.outputText_stall) ? Strings.outputText_empty : ID;
+                X = (X == Strings.outputText_stall) ? Strings.outputText_empty : X;
+                M = (M == Strings.outputText_stall) ? Strings.outputText_empty : M;
+                W = (W == Strings.outputText_stall) ? Strings.outputText_empty : W;
+            }
 
             //keep a record, or print the state of the pipelien
-            string s = String.Format("This is the state at of the pipeline at cycle {0}:\n" +
+            string s = String.Format("This is the state of the pipeline at cycle {0}:\n" +
                 "Fetch: {1}\n" +
                 "Decode: {2}\n" +
                 "Execute: {3}\n" +

@@ -86,7 +86,9 @@
                 <TextBlock x:Name="NotesTextBlock" TextWrapping="Wrap" TextAlignment="Center"/>
             </StackPanel>
             <WrapPanel x:Name="OutputView" Background="Azure" Focusable="True" MouseLeftButtonDown="canvas_MouseLeftButtonDown" Grid.Column="1" HorizontalAlignment="Stretch">
-                <TextBlock x:Name="output_textblock" TextWrapping="Wrap" TextAlignment="Left"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" UseLayoutRounding="False" Width="{Binding ActualWidth,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=WrapPanel}}">
+                    <TextBlock x:Name="output_textblock" TextWrapping="Wrap" TextAlignment="Left" Margin="10"/>
+                </ScrollViewer>
             </WrapPanel>
             <StackPanel Grid.Column="2" Background="Teal">
                 <TextBlock x:Name="abc456" Width="100" Height="1000" TextWrapping="Wrap" TextAlignment="Center"/>

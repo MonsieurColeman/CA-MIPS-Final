@@ -109,6 +109,75 @@ namespace MIPSPipelineHazardDetector
         }
     }
 
+    public struct InstructionCommand
+    {
+        public Instruction inst_;
+        public InstructionType type_;
+        public Register rs_;
+        public Register rt_;
+        public Register rd_;
+        public int immediate_;
+        public int wordAddress_;
+        public bool rTypeImmediateFlag_;
+        public int shamt_;
+
+        public InstructionCommand(Instruction i, Register rs = null, Register rt = null, Register rd = null,
+            int immediate = 0, bool rTypeImmediateFlag = false, int wordAddress = 0, int shamt = 0)
+        {
+            inst_ = i;
+            type_ = i.GetInstructionType();
+            rs_ = rs;
+            rt_ = rt;
+            rd_ = rd;
+            immediate_ = immediate;
+            wordAddress_ = wordAddress;
+            rTypeImmediateFlag_ = rTypeImmediateFlag;
+            shamt_ = shamt;
+        }
+
+        public override string ToString()
+        { //convert back to input syntax
+            string returnStr = "";
+            switch (type_)
+            {
+
+                case InstructionType.rType:
+                    if (rTypeImmediateFlag_)
+                        returnStr =
+                            inst_.ToString() + " " +
+                            rs_.ToString() + ", " +
+                            rt_.ToString() + ", " +
+                            immediate_.ToString();
+                    else
+                        returnStr =
+                            inst_.ToString() + " " +
+                            rs_.ToString() + ", " +
+                            rt_.ToString() + ", " +
+                            rd_.ToString();
+                    break;
+                case InstructionType.iType:
+                    returnStr =
+                        inst_.ToString() + " " +
+                        rs_.ToString() + ", " +
+                        immediate_.ToString() +
+                        "(" + rt_.ToString() + ")";
+                    break;
+                case InstructionType.stall:
+                    returnStr = Strings.outputText_stall;
+                    break;
+                default:
+                    returnStr = base.ToString();
+                    break;
+            }
+            return returnStr;
+        }
+
+        public static InstructionCommand Stall()
+        {
+            return new InstructionCommand(Instruction.Stall());
+        }
+    }
+
     public static class Globals
     {
         public static readonly string register0 = "$zero";

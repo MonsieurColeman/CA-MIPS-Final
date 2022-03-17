@@ -63,9 +63,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PipelineDependencyChecker.cs" />
     <Compile Include="Pipeline.cs" />
     <Compile Include="GlobalLanguageEntries.cs" />
-    <Compile Include="InstructionConverter.cs" />
+    <Compile Include="Coverter.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="ClientExecutor.cs" />
     <Compile Include="FileManager.cs" />

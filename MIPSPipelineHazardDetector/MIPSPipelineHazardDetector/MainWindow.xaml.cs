@@ -51,7 +51,7 @@ namespace MIPSPipelineHazardDetector
 
             //Read text from file
             string fileContent = FileManager.ReadTextFile(sFilenames);
-            (bool, List<InstructionCommand>, bool) instructionList = InstructionConverter.StringInstructionConverter(fileContent);
+            (bool, List<InstructionCommand>, bool) instructionList = Coverter.StringInstructionConverter(fileContent);
 
             //Give to fileManager | returns true if file is invalid
             if (!instructionList.Item1)
