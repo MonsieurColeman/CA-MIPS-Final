@@ -45,7 +45,7 @@ namespace MIPSPipelineHazardDetector
             return (stringWasParsedCorrectly, commands, unrecognizedCommandsEntered);
         }
 
-        static string[] StringToListCovnerter(string s)
+        public static string[] StringToListCovnerter(string s)
         //Takes a parces a string into a string array by delimiters
         {
             char[] delims = new[] { '\r', '\n' };

@@ -13,12 +13,27 @@ namespace MIPSPipelineHazardDetector
          is of the essence
          */
 
-        static int cycle = 0;
-        static Stack<InstructionCommand> fetchStack = new Stack<InstructionCommand>();
-        static Stack<InstructionCommand> DecodeStack = new Stack<InstructionCommand>();
-        static Stack<InstructionCommand> ExecuteStack = new Stack<InstructionCommand>();
-        static Stack<InstructionCommand> MemoryStack = new Stack<InstructionCommand>();
-        static Stack<InstructionCommand> WritebackStack = new Stack<InstructionCommand>();
+        public struct PipelineObj
+        {
+            public InstructionCommand command;
+            int cycle;
+            public List<string> str;
+
+            public PipelineObj(InstructionCommand ic)
+            {
+                command = ic;
+                cycle = __cycle;
+                str = new List<string>() { "F"};
+            }
+        }
+
+        static int __cycle = 0;
+        static Stack<PipelineObj> __fetchStack = new Stack<PipelineObj>();
+        static Stack<PipelineObj> __DecodeStack = new Stack<PipelineObj>();
+        static Stack<PipelineObj> __ExecuteStack = new Stack<PipelineObj>();
+        static Stack<PipelineObj> __MemoryStack = new Stack<PipelineObj>();
+        static Stack<PipelineObj> __WritebackStack = new Stack<PipelineObj>();
+        public static List<PipelineObj> __output = new List<PipelineObj>();
         public string __state = "";
         public bool __forwardingEnabled = false;
 
@@ -29,94 +44,121 @@ namespace MIPSPipelineHazardDetector
 
         public void StartPipelineWithCommand(InstructionCommand command)
         {
+            FillPipeline();
             StateOfPipelineStart();
-            cycle++; //first cycle
-            fetchStack.Push(command);
+            __cycle++; //first cycle
+            __fetchStack.Push(new PipelineObj(command));
             StateOfPipeline();
             //NextCycle();
         }
 
         public void AddCommandToPipline(InstructionCommand command)
         {
+            //move everyone out of the way
+            NextCycle(false);
 
-            if (PipelineDependencyChecker.HazardChecker(command, fetchStack.Peek()))
+            //instruction always gets into fetch
+            __fetchStack.Push(new PipelineObj(command));
+
+            //if there is a hazard,
+            if (PipelineDependencyChecker.HazardChecker(command, __fetchStack.Peek().command))
             {
+                StateOfPipeline();
                 int stall = 0;
-                stall = PipelineDependencyChecker.StallDeterminer(__forwardingEnabled, command.inst_, fetchStack.Peek().inst_);
+                stall = PipelineDependencyChecker.StallDeterminer(__forwardingEnabled, command.inst_, __fetchStack.Peek().command.inst_);
                 AdvancePipelineByXCycles(stall);
             }
-            NextCycle();
-            fetchStack.Push(command);
-            //NextCycle();
-            StateOfPipeline();
-
+            else
+            {
+                StateOfPipeline();
+            }
         }
 
-        public void NextCycle()
+        public void EndPipeline()
         {
-            cycle++;
+            AdvancePipelineByXCycles(5);
+        }
+
+        public void NextCycle(bool stall)
+        {
+            __cycle++;
 
             /* 
              * remove instructions from the end of the pipeline
              * to simulate a flush
              */
-            if (WritebackStack.Count > 0)
-                WritebackStack.Pop();
-            if (MemoryStack.Count > 0)
-                WritebackStack.Push(MemoryStack.Pop());
-            if (ExecuteStack.Count > 0)
-                MemoryStack.Push(ExecuteStack.Pop());
-            if (DecodeStack.Count > 0)
-                ExecuteStack.Push(DecodeStack.Pop());
+            PipelineObj obj;
+            if (__WritebackStack.Count > 0)
+            {
+                //remove from pipline
+                obj = __WritebackStack.Pop();
+                //modify string
+                obj.str.Add("W");
+                //add to output for display
+                if (!(__output.Count >= 4) && obj.command.inst_.GetKey() != Strings.outputText_stall && obj.command.inst_.GetKey() != Strings.outputText_empty)
+                    __output.Add(obj);
+            }
+            if (__MemoryStack.Count > 0)
+            {
+                //pop to modify pipeline object
+                obj = __MemoryStack.Pop();
+                //modify string
+                obj.str.Add("M");
+                //add to next stage of pipeline
+                __WritebackStack.Push(obj);
+            }
+            if (__ExecuteStack.Count > 0)
+            {
+                //pop to modify pipeline object
+                obj = __ExecuteStack.Pop();
+                //modify string
+                obj.str.Add("X");
+                //add to next stage of pipeline
+                __MemoryStack.Push(obj);
+            }
+            if (__DecodeStack.Count > 0)
+            {
+                //pop to modify pipeline object
+                obj = __DecodeStack.Pop();
+                //modify string
+                obj.str.Add("D");
+                //add to next stage of pipeline
+                __ExecuteStack.Push(obj);
+            }
 
             /*
              * If an instruction had not entered the pipeline, a stall must
              * be enqueued
              */
-            if (fetchStack.Count > 0)
-                DecodeStack.Push(fetchStack.Pop());
+            if (stall)
+            {
+                //pop to modify pipeline object
+                obj = __fetchStack.Peek();
+                //modify string
+                obj.str.Add("S");
+                //add to next stage of pipeline
+                __DecodeStack.Push(new PipelineObj(InstructionCommand.Stall()));
+            }
             else
-                DecodeStack.Push(InstructionCommand.Stall());
+            {
+                //add to next stage of pipeline
+                __DecodeStack.Push(__fetchStack.Pop());
+            }
 
             //StateOfPipeline();
         }
 
-        public void NextCycleTest()
-        {
-            cycle++;
-
-            //remove instruction at the end of the pipeline
-            if (WritebackStack.Count > 0)
-                WritebackStack.Pop();
-
-            //enqueue instructions from the previous state of the pipeline
-            //if nothing was in that stage, place a stall cycle in
-            if (MemoryStack.Count > 0)
-                WritebackStack.Push(MemoryStack.Pop());
-            else
-                WritebackStack.Push(InstructionCommand.Stall());
-
-
-            DecodeStack.Push(InstructionCommand.Stall());
-
-            StateOfPipeline();
-        }
 
         private void Stall()
         {
-            cycle++;
-        }
-
-        private void StallByValue(int num)
-        {
-            cycle += num;
+            __cycle++;
         }
 
         private void AdvancePipelineByXCycles(int num)
         {
             for (int i = 0; i < num; i++)
             {
-                NextCycle();
+                NextCycle(true);
                 StateOfPipeline();
             }
 
@@ -125,11 +167,11 @@ namespace MIPSPipelineHazardDetector
         private int DependencyCheckNoForwarding(InstructionCommand command)
         {
             int numOfStallCycles = 0;
-            InstructionCommand fetchCommand = fetchStack.Peek();
-            InstructionCommand DecodeCommand = DecodeStack.Peek();
-            InstructionCommand ExecuteCommand = ExecuteStack.Peek();
-            InstructionCommand MemoryCommand = MemoryStack.Peek();
-            InstructionCommand WritebackCommand = WritebackStack.Peek();
+            InstructionCommand fetchCommand = __fetchStack.Peek().command;
+            InstructionCommand DecodeCommand = __DecodeStack.Peek().command;
+            InstructionCommand ExecuteCommand = __ExecuteStack.Peek().command;
+            InstructionCommand MemoryCommand = __MemoryStack.Peek().command;
+            InstructionCommand WritebackCommand = __WritebackStack.Peek().command;
             InstructionCommand newInstruction = command;
 
             //do something
@@ -139,20 +181,11 @@ namespace MIPSPipelineHazardDetector
 
         private void StateOfPipeline()
         {
-            string IF = (fetchStack.Count > 0) ? fetchStack.Peek().ToString() : InstructionCommand.Stall().ToString();
-            string ID = (DecodeStack.Count > 0) ? DecodeStack.Peek().ToString() : InstructionCommand.Stall().ToString();
-            string X = (ExecuteStack.Count > 0) ? ExecuteStack.Peek().ToString() : InstructionCommand.Stall().ToString();
-            string M = (MemoryStack.Count > 0) ? MemoryStack.Peek().ToString() : InstructionCommand.Stall().ToString();
-            string W = (WritebackStack.Count > 0) ? WritebackStack.Peek().ToString() : InstructionCommand.Stall().ToString();
-
-            if(cycle < 6) //bad logic to change later
-            {
-                IF = (IF == Strings.outputText_stall) ? Strings.outputText_empty : IF;
-                ID = (ID == Strings.outputText_stall) ? Strings.outputText_empty : ID;
-                X = (X == Strings.outputText_stall) ? Strings.outputText_empty : X;
-                M = (M == Strings.outputText_stall) ? Strings.outputText_empty : M;
-                W = (W == Strings.outputText_stall) ? Strings.outputText_empty : W;
-            }
+            string IF = (__fetchStack.Count > 0) ? __fetchStack.Peek().command.ToString() : InstructionCommand.Stall().ToString();
+            string ID = (__DecodeStack.Count > 0) ? __DecodeStack.Peek().command.ToString() : InstructionCommand.Stall().ToString();
+            string X = (__ExecuteStack.Count > 0) ? __ExecuteStack.Peek().command.ToString() : InstructionCommand.Stall().ToString();
+            string M = (__MemoryStack.Count > 0) ? __MemoryStack.Peek().command.ToString() : InstructionCommand.Stall().ToString();
+            string W = (__WritebackStack.Count > 0) ? __WritebackStack.Peek().command.ToString() : InstructionCommand.Stall().ToString();
 
             //keep a record, or print the state of the pipelien
             string s = String.Format("This is the state of the pipeline at cycle {0}:\n" +
@@ -160,9 +193,9 @@ namespace MIPSPipelineHazardDetector
                 "Decode: {2}\n" +
                 "Execute: {3}\n" +
                 "Memory: {4}\n" +
-                "WriteBack {5}\n\n" +
+                "WriteBack: {5}\n\n" +
                 "----------", 
-                cycle.ToString(),
+                __cycle.ToString(),
                 IF.ToString(),
                 ID.ToString(),
                 X.ToString(),
@@ -180,6 +213,14 @@ namespace MIPSPipelineHazardDetector
         private void UpdatePipelineState(string s)
         {
             __state += "\n" + s + "\n";
+        }
+
+        private void FillPipeline()
+        {
+            __DecodeStack.Push(new PipelineObj(InstructionCommand.Empty()));
+            __ExecuteStack.Push(new PipelineObj(InstructionCommand.Empty()));
+            __MemoryStack.Push(new PipelineObj(InstructionCommand.Empty()));
+            __WritebackStack.Push(new PipelineObj(InstructionCommand.Empty()));
         }
     }
 }

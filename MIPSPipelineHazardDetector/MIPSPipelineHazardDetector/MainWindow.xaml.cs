@@ -22,12 +22,13 @@ namespace MIPSPipelineHazardDetector
     public partial class MainWindow : Window
     {
         ClientExec exec;
+        static Grid diagram;
 
         public MainWindow()
         {
             
             InitializeComponent();
-            exec = new ClientExec();
+            exec = new ClientExec(this);
         }
 
         private void btn_new_Click(object sender, RoutedEventArgs e)
@@ -63,10 +64,22 @@ namespace MIPSPipelineHazardDetector
             else if (instructionList.Item3)
                 MessageBox.Show(Strings.error_UnrecognizedArguments);
             else
-                output_textblock.Text = exec.RunApplication(instructionList.Item2); //placeholder: todo
-
-            //placeholder: todo
-            //output_textblock = exec.RunApplication(instructionList.Item2);
+            {
+                output_textblock.Text = exec.RunApplication(instructionList.Item2);
+                string[] ints = Coverter.StringToListCovnerter(fileContent);
+                for(int i = 0; i < 4; i++)
+                {
+                    TextBlock tb = new TextBlock();
+                    tb.Text = ints[i];
+                    tb.Margin = new Thickness(30);
+                    tb.SetValue(Grid.RowProperty, i+1);
+                    tb.SetValue(Grid.ColumnProperty, 0);
+                    tb.HorizontalAlignment = HorizontalAlignment.Center;
+                    tb.VerticalAlignment = VerticalAlignment.Center;
+                    tb.Background = new SolidColorBrush(Colors.White);
+                    visualGrid.Children.Add(tb);
+                }
+            }
         }
 
         private void btn_export_Click(object sender, RoutedEventArgs e)
@@ -91,9 +104,45 @@ namespace MIPSPipelineHazardDetector
             System.Windows.Application.Current.Shutdown();
         }
 
+        public void ShowDiagramForFirstFourInstructions(List<List<string>> strings)
+        {
+            int offset = 0;
+            for (int i = 0; i < strings.Count; i++) //for each command
+            {
+                for (int j = 0; j < strings[i].Count; j++) //for each letter
+                {
+                    TextBlock tb = new TextBlock();
+                    tb.Text = strings[i][j].ToString();
+                    tb.SetValue(Grid.RowProperty, i + 1);
+                    tb.SetValue(Grid.ColumnProperty, j + 1 + offset);
+                    tb.HorizontalAlignment = HorizontalAlignment.Center;
+                    tb.VerticalAlignment = VerticalAlignment.Center;
+                    visualGrid.Children.Add(tb);
+                    
+                }
+                offset++;
+                offset += strings[i].Count-5;
+            }
+        }
+
         private void canvas_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
 
         }
     }
 }
+
+
+/*
+                 UIElement GetGridElement(Grid g, Row r, Column c)
+                {
+                    for (int i = 0; i < g.Children.Count; i++)
+                    {
+                        UIElement e1 = g.Children[i];
+                        if (Grid.GetRow(e1) == r && Grid.GetColumn(e1) == c)
+                            return e1;
+                    }
+                    return null;
+                }
+ 
+ */

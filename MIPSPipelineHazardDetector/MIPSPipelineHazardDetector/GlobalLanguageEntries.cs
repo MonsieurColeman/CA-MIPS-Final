@@ -46,7 +46,7 @@ namespace MIPSPipelineHazardDetector
         }
     }
 
-    public enum InstructionType { rType, iType, jType, stall }
+    public enum InstructionType { rType, iType, jType, stall, empty }
 
     public struct Instruction
     {
@@ -101,6 +101,11 @@ namespace MIPSPipelineHazardDetector
         public static Instruction Stall()
         {
             return new Instruction(Globals.command0, Globals.stall_binary, InstructionType.stall);
+        }
+
+        public static Instruction Empty()
+        {
+            return new Instruction(Strings.outputText_empty, Globals.stall_binary, InstructionType.empty);
         }
 
         public override string ToString()
@@ -165,6 +170,9 @@ namespace MIPSPipelineHazardDetector
                 case InstructionType.stall:
                     returnStr = Strings.outputText_stall;
                     break;
+                case InstructionType.empty:
+                    returnStr = Strings.outputText_empty;
+                    break;
                 default:
                     returnStr = base.ToString();
                     break;
@@ -175,6 +183,11 @@ namespace MIPSPipelineHazardDetector
         public static InstructionCommand Stall()
         {
             return new InstructionCommand(Instruction.Stall());
+        }
+
+        public static InstructionCommand Empty()
+        {
+            return new InstructionCommand(Instruction.Empty());
         }
     }
 
