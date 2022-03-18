@@ -20,44 +20,48 @@ namespace MIPSPipelineHazardDetector
 			//Setup for the switch statement
 			HazardObject obj = new HazardObject();
 			HazardObject olderObj = new HazardObject();
-			int iterations = 0;
+			int iterations;
+			int numOfObjects = objOfHazard.Count;
 
-			//Iterate over previous commands to detect hazards
-			switch (checkedCommands.Count)
+			for (int j = 0; j < numOfObjects; j++)
             {
-				case 0:
-					//not much to do
-					checkedCommands.Add(objOfHazard.Dequeue());
-					break;
-				case 1:
-					obj = objOfHazard.Dequeue();
-					HazardObject oldOBJ = checkedCommands[checkedCommands.Count - 1];
-					GetHazard(ref obj, ref oldOBJ, unifiedMemory, false);
-					checkedCommands.Add(obj);
-					break;
-				case 2:
-					obj = objOfHazard.Dequeue();
-					olderObj = new HazardObject();
-					iterations = checkedCommands.Count - 1;
-					for (int i = 0; i < iterations; i++)
-                    {
-						olderObj = checkedCommands[checkedCommands.Count - 1 - i];
-						GetHazard(ref obj, ref olderObj, unifiedMemory, false);
-					}
-					checkedCommands.Add(obj);
-					break;
-				default:
-					obj = objOfHazard.Dequeue();
-					olderObj = new HazardObject();
-					iterations = checkedCommands.Count - 1;
-					for (int i = 0; i < iterations; i++)
-					{
-						olderObj = checkedCommands[checkedCommands.Count - 1 - i];
-						GetHazard(ref obj, ref olderObj, unifiedMemory, true);
-					}
-					checkedCommands.Add(obj);
-					break;
-            }
+				//Iterate over previous commands to detect hazards
+				switch (checkedCommands.Count)
+				{
+					case 0:
+						//not much to do
+						checkedCommands.Add(objOfHazard.Dequeue());
+						break;
+					case 1:
+						obj = objOfHazard.Dequeue();
+						HazardObject oldOBJ = checkedCommands[checkedCommands.Count - 1];
+						GetHazard(ref obj, ref oldOBJ, unifiedMemory, false);
+						checkedCommands.Add(obj);
+						break;
+					case 2:
+						obj = objOfHazard.Dequeue();
+						olderObj = new HazardObject();
+						iterations = checkedCommands.Count;
+						for (int i = 0; i < iterations; i++)
+						{
+							olderObj = checkedCommands[checkedCommands.Count - 1 - i];
+							GetHazard(ref obj, ref olderObj, unifiedMemory, false);
+						}
+						checkedCommands.Add(obj);
+						break;
+					default:
+						obj = objOfHazard.Dequeue();
+						olderObj = new HazardObject();
+						iterations = 2;
+						for (int i = 0; i < iterations; i++)
+						{
+							olderObj = checkedCommands[checkedCommands.Count - 1 - i];
+							GetHazard(ref obj, ref olderObj, unifiedMemory, true);
+						}
+						checkedCommands.Add(obj);
+						break;
+				}
+			}
 
 			return checkedCommands;
 		}
@@ -79,14 +83,23 @@ namespace MIPSPipelineHazardDetector
 				command.hazards = true;
 				newCommand.hazards = true;
             }
-			if (command.__rs == newCommand.__rt)
+			if (command.__rs == newCommand.__rt && newCommand._inst.ToString() != "sw")
 			{
-				newCommand.rd__Hazard = HazardType.data;
-				command.rt__Hazard = HazardType.data;
+				newCommand.rt__Hazard = HazardType.data;
+				command.rs__Hazard = HazardType.data;
 				command.hazards = true;
 				newCommand.hazards = true;
 			}
-			if(unifiedMemory && moreThan3Instructions)
+			
+			if (command.__rs == newCommand.__rs && newCommand._inst.ToString() == "sw")
+			{
+				newCommand.rs__Hazard = HazardType.data;
+				command.rs__Hazard = HazardType.data;
+				command.hazards = true;
+				newCommand.hazards = true;
+			}
+			
+			if (unifiedMemory && moreThan3Instructions)
             {
 				newCommand.inst__hazard = HazardType.structural;
 				command.inst__hazard = HazardType.structural;
@@ -103,6 +116,7 @@ namespace MIPSPipelineHazardDetector
             {
 				HazardObject hazardObject = new HazardObject();
 				hazardObject._inst = commands[i].inst_;
+				hazardObject.instructionType = commands[i].type_;
 				hazardObject.__rs = commands[i].rs_;
 				hazardObject.__rt = commands[i].rt_;
 				hazardObject.__rd = commands[i].rd_;
@@ -124,6 +138,7 @@ namespace MIPSPipelineHazardDetector
     {
 		public bool hazards;
 		public Instruction _inst;
+		public InstructionType instructionType;
 		public HazardType inst__hazard;
 		public HazardType rs__Hazard;
 		public HazardType rt__Hazard;

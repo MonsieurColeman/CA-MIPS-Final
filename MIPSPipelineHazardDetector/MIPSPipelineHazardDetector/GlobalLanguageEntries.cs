@@ -231,6 +231,7 @@ namespace MIPSPipelineHazardDetector
         public static readonly string command2 = "sub";
         public static readonly string command3 = "lw";
         public static readonly string command4 = "sw";
+        public static readonly string command5 = "xor";
 
         public static readonly int instructionBitLegnth = 32;
         public static readonly int opcodeLength = 6;
@@ -241,6 +242,7 @@ namespace MIPSPipelineHazardDetector
         public static readonly int immediateFieldLength = 16;
 
         public static readonly string add_binary = "100000";
+        public static readonly string xor_binary = "100001";
         public static readonly string sub_binary = "100010";
         public static readonly string lw_binary = "100011";
         public static readonly string sw_binary = "101011";
@@ -269,6 +271,7 @@ namespace MIPSPipelineHazardDetector
         { command0, new Instruction(command0, stall_binary, InstructionType.stall) }, //func
         { command1, new Instruction(command1, add_binary, InstructionType.rType) }, //func
         { command2, new Instruction(command2, sub_binary, InstructionType.rType) }, //func
+        { command5, new Instruction(command5, xor_binary, InstructionType.rType) }, //func
         { command3, new Instruction(command3, lw_binary, InstructionType.iType) }, //load
         { command4, new Instruction(command4, sw_binary, InstructionType.iType) }, //store
     };

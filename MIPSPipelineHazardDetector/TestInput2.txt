@@ -1,0 +1,6 @@
+lw $t0, 0($s2)
+add $s2, $s2, 4
+add $t0, $t0, 5
+sw $t0, 0($s4)
+add $s4, $s4, 4
+add $s0, $s0, 1

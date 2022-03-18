@@ -28,6 +28,8 @@ namespace MIPSPipelineHazardDetector
             
             InitializeComponent();
             exec = new ClientExec(this);
+            WelcomeMemo.Text = Strings.WelcomeMemoText;
+            AddLabelsToDiagram();
         }
 
         private void btn_new_Click(object sender, RoutedEventArgs e)
@@ -240,20 +242,142 @@ namespace MIPSPipelineHazardDetector
                 ForwardingDiagram.Children.Add(CreateInstructionTextBox(ints[i], i));
             }
 
-            AddLabelsToDiagram();
+            //AddLabelsToDiagram();
         }
 
         private void AddLabelsToDiagram()
         {
-            NonForwardingDiagram.Children.Add(CreateInstructionTextBox("No Forwarding", -1));
-            ForwardingDiagram.Children.Add(CreateInstructionTextBox("Forwarding", -1));
+            NonForwardingDiagram.Children.Add(CreateInstructionTextBox("No Forwarding\nDiagram", -1));
+            ForwardingDiagram.Children.Add(CreateInstructionTextBox("Forwarding\nDiagram", -1));
         }
 
         public void ManifestHazards(List<HazardObject> objects)
         {
-            
+            TextBlock tb_inst;
+            TextBlock tb_rs;
+            TextBlock tb_rt;
+            TextBlock tb_dynamic;
+            for (int i = 0; i < objects.Count; i++)
+            {
+                HazardObject hObj = objects[i];
+                tb_inst = CreateHazardText(hObj._inst.ToString(), hObj.inst__hazard);
+                tb_rs = CreateHazardText(hObj.__rs.ToString(), hObj.rs__Hazard);
+                tb_rt = CreateHazardText(hObj.__rt.ToString(), hObj.rt__Hazard);
+
+                switch (hObj.instructionType)
+                {
+                    case InstructionType.rType:
+                        if (hObj.__rTypeImmediateFlag)
+                            tb_dynamic = CreateHazardText(hObj.__immediate.ToString(), HazardType.none);
+                        else
+                            tb_dynamic = CreateHazardText(hObj.__rd.ToString(), hObj.rd__Hazard);
+                        break;
+                    case InstructionType.iType:
+                        tb_dynamic = CreateHazardText(hObj.__immediate.ToString(), HazardType.none);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                        //break;
+                }
+
+                StackPanel stackpanel = GetStackPanelFromTextboxes(tb_inst, tb_rs, tb_rt,tb_dynamic, hObj.instructionType);
+                DependencyDiagramYAxis.Children.Add(stackpanel); //add stack panel containing objs
+            }
+
+
         }
 
+        private TextBlock CreateHazardText(string text, HazardType hT)
+        {
+            TextBlock tb = new TextBlock();
+            if (hT != HazardType.none)
+                tb.Background = GetColorFromEnum(hT);
+            tb.Text = text;
+            tb.HorizontalAlignment = HorizontalAlignment.Center;
+            tb.VerticalAlignment = VerticalAlignment.Center;
+            return tb;
+        }
+
+        private StackPanel GetStackPanelFromTextboxes(TextBlock instTB, 
+            TextBlock rsTB, TextBlock rtTB, TextBlock dynamicTB,
+            InstructionType iT)
+        {
+            StackPanel stackpanel = new StackPanel();
+            TextBlock tb = new TextBlock();
+
+            stackpanel.Orientation = Orientation.Horizontal;
+            stackpanel.HorizontalAlignment = HorizontalAlignment.Center;
+            stackpanel.Margin = new Thickness(5);
+            stackpanel.Children.Add(instTB);
+            stackpanel.Children.Add(CreateTextbox(" "));
+            stackpanel.Children.Add(rsTB);
+            stackpanel.Children.Add(CreateTextbox(", "));
+            if (iT == InstructionType.iType)
+            {
+                stackpanel.Children.Add(dynamicTB);
+                stackpanel.Children.Add(CreateTextbox("("));
+                stackpanel.Children.Add(rtTB);
+                stackpanel.Children.Add(CreateTextbox(")"));
+            }
+            else
+            {
+                stackpanel.Children.Add(rtTB);
+                stackpanel.Children.Add(CreateTextbox(", "));
+                stackpanel.Children.Add(dynamicTB);
+            }
+            return stackpanel;
+        }
+
+        private AccessText CreateTextbox(string s)
+        {
+            AccessText tb = new AccessText();
+            tb.HorizontalAlignment = HorizontalAlignment.Center;
+            tb.VerticalAlignment = VerticalAlignment.Center;
+            tb.Text = s;
+            return tb;
+        }
+
+        private Brush GetColorFromEnum(HazardType hazard)
+        {
+            switch (hazard)
+            {
+                case HazardType.structural:
+                    return new SolidColorBrush(Colors.Yellow);
+                case HazardType.data:
+                    return new SolidColorBrush(Colors.Red);
+                case HazardType.control:
+                    return new SolidColorBrush(Colors.Blue);
+                default: 
+                    return new SolidColorBrush(Colors.Black);
+            }
+        }
+
+
+
+        /*
+         
+                     if (nt == NodeType.nonLeaf)
+            {
+                obj.Background = new SolidColorBrush(Color.FromRgb(153, 255, 153)); //green
+                TextBlock at = new TextBlock();
+                at.HorizontalAlignment = HorizontalAlignment.Center;
+                at.VerticalAlignment = VerticalAlignment.Center;
+                at.Text = node.key; //display text
+                obj.Children.Add(at);
+            }
+            else if (nt == NodeType.root)
+            {
+                obj.Background = new SolidColorBrush(Color.FromRgb(153, 255, 153)); //green
+                TextBlock at = new TextBlock();
+                at.HorizontalAlignment = HorizontalAlignment.Center;
+                at.VerticalAlignment = VerticalAlignment.Center;
+                at.Text = node.key; //display text
+                obj.Children.Add(at);
+            }
+            else
+            {//leaf
+                obj.Background = new SolidColorBrush(Color.FromRgb(255, 204, 153)); //orange
+         */
         private TextBlock CreateInstructionTextBox(string text, int rowNum)
         {
             TextBlock tb = new TextBlock();
@@ -263,7 +387,7 @@ namespace MIPSPipelineHazardDetector
             tb.SetValue(Grid.ColumnProperty, 0);
             tb.HorizontalAlignment = HorizontalAlignment.Center;
             tb.VerticalAlignment = VerticalAlignment.Center;
-            tb.Background = new SolidColorBrush(Colors.White);
+            //tb.Background = new SolidColorBrush(Colors.White);
             return tb;
         }
 

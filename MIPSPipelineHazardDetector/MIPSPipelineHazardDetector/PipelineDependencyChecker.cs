@@ -18,50 +18,22 @@ namespace MIPSPipelineHazardDetector
 
         public static bool HazardChecker(InstructionCommand newCommand, InstructionCommand command)
         {
+            //if either of the commands is a stall or empty, then no dependencies
+            if (newCommand.inst_.GetInstructionType() == InstructionType.stall ||
+                newCommand.inst_.GetInstructionType() == InstructionType.empty ||
+                command.inst_.GetInstructionType() == InstructionType.stall ||
+                command.inst_.GetInstructionType() == InstructionType.empty)
+                return false;
+
             bool hazardExists = false;
 
-            /*
-            //if both are rtypes without immediates, we check registers
-            if (command.inst_.GetInstructionType() == InstructionType.rType
-                && newCommand.inst_.GetInstructionType() == InstructionType.rType 
-                && !newCommand.rTypeImmediateFlag_)
-                if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_)
-                    return true;
-
-            //if the new command has an immediate, we check the destination with the new commands rt
-            if (command.inst_.GetInstructionType() == InstructionType.rType
-                && newCommand.inst_.GetInstructionType() == InstructionType.rType
-                && newCommand.rTypeImmediateFlag_)
-                if (command.rs_ == newCommand.rt_)
-                    return true;
-
-            //if the new command has an immediate, we check the destination with the new commands rt
-            if (command.inst_.GetInstructionType() == InstructionType.iType
-                && newCommand.inst_.GetInstructionType() == InstructionType.rType
-                && newCommand.rTypeImmediateFlag_)
-                if (command.rs_ == newCommand.rt_)
-                    return true;
-
-            if (command.inst_.GetInstructionType() == InstructionType.rType && newCommand.inst_.GetInstructionType() == InstructionType.rType && !command.rTypeImmediateFlag_ && !newCommand.rTypeImmediateFlag_)
-            {
-                if (newCommand.rs_ == command.rt_ || newCommand.rs_ == command.rd_)
-                    return true;
-            }
-            else if (newCommand.rTypeImmediateFlag_ && command.rTypeImmediateFlag_)
-            else if (command.inst_.GetInstructionType() == InstructionType.rType)
-            {
-
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-            if (newCommand.rs_ == command.rt_ || newCommand.rs_ == command.rd_)
-            */
-
-            if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_)
+            //if new command tries to read from old command, it is a potential data hazard
+            if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_ && newCommand.inst_.GetKey() == "sw")
                 return true;
 
+            //if store command, the rs_ section is a read, not a write
+            if(newCommand.inst_.GetKey() == "sw" && command.rs_ == newCommand.rs_)
+                return true;
 
             return hazardExists;
         }

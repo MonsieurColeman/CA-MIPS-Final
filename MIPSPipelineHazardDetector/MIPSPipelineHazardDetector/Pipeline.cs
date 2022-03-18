@@ -60,6 +60,50 @@ namespace MIPSPipelineHazardDetector
 
         public void AddCommandToPipline(InstructionCommand command)
         {
+            InstructionCommand prevCommand = __fetchStack.Peek().command;
+            InstructionCommand grandFatherCommand = __DecodeStack.Peek().command;
+            InstructionCommand greatGrandFatherCommand = __DecodeStack.Peek().command;
+
+
+            //move everyone out of the way
+            NextCycle(false);
+
+            //instruction always gets into fetch
+            __fetchStack.Push(new PipelineObj(command));
+
+            //if there is a hazard,
+            if (PipelineDependencyChecker.HazardChecker(command, prevCommand))
+            {
+                StateOfPipeline();
+                int stall = 0;
+                stall = PipelineDependencyChecker.StallDeterminer(__forwardingEnabled, command.inst_, prevCommand.inst_);
+                AdvancePipelineByXCycles(stall);
+            }
+            else if (PipelineDependencyChecker.HazardChecker(command, grandFatherCommand))
+            {
+                StateOfPipeline();
+                int stall = 0;
+                stall = PipelineDependencyChecker.StallDeterminer(__forwardingEnabled, command.inst_, grandFatherCommand.inst_ ) - 1;
+                stall = (stall >= 0) ? stall : 0;
+                AdvancePipelineByXCycles(stall);
+            }
+            else if (PipelineDependencyChecker.HazardChecker(command, greatGrandFatherCommand))
+            {
+                StateOfPipeline();
+                int stall = 0;
+                stall = PipelineDependencyChecker.StallDeterminer(__forwardingEnabled, command.inst_, greatGrandFatherCommand.inst_) - 2;
+                stall = (stall >= 0) ? stall : 0;
+                AdvancePipelineByXCycles(stall);
+            }
+            else
+            {
+                StateOfPipeline();
+            }
+        }
+
+        /*
+        public void AddCommandToPipline(InstructionCommand command)
+        {
             //move everyone out of the way
             NextCycle(false);
 
@@ -79,6 +123,7 @@ namespace MIPSPipelineHazardDetector
                 StateOfPipeline();
             }
         }
+        */
 
         public void EndPipeline()
         {

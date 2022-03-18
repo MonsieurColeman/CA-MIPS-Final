@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MIPSPipelineHazardDetector"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        WindowState="Maximized"
+        WindowStyle="None">
     <DockPanel>
 
         <Border DockPanel.Dock="Bottom" Background="Teal">
@@ -25,8 +27,8 @@
                 <ColumnDefinition Width=".1*"/>
                 <ColumnDefinition Width=".1*"/>
                 <ColumnDefinition Width=".1*"/>
-                <ColumnDefinition Width=".1*"/>
                 <ColumnDefinition Width=".5*"/>
+                <ColumnDefinition Width=".2*"/>
                 <ColumnDefinition Width=".1*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -34,7 +36,9 @@
             </Grid.RowDefinitions>
             <Button x:Name="btn_new" Click="btn_new_Click" Grid.Column="0" Background="PaleTurquoise" Margin="5">New</Button>
             <Button x:Name="btn_export" Click="btn_export_Click"  Grid.Column="1" Background="PaleTurquoise" Margin="5">Export</Button>
-
+            <AccessText x:Name="ApplicationLabel" Text="MIPS Pipeline Simulator" Margin="5"
+                        Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        FontSize="28"/>
             <Button Content="Exit App" Grid.Column="5" Margin="10,10,10,10" Background="PowderBlue" Click="btn_exitApp_Click"/>
 
         </Grid>
@@ -79,7 +83,7 @@
                 </Viewbox.RenderTransform>
             </Viewbox>
         </Border>
-        <Grid>
+        <Grid Background="Aquamarine">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width=".1*"/>
@@ -93,27 +97,19 @@
                     <ColumnDefinition Width=".1*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="10*" />
                     <RowDefinition Height="10*"/>
                 </Grid.RowDefinitions>
-                <AccessText Background="Aqua" Grid.Row="0" Grid.Column="1">
-                    
-                </AccessText>
+
+                <ScrollViewer Grid.Column="1" Background="Azure" Grid.Row="0" HorizontalScrollBarVisibility="Auto" Margin="5" CanContentScroll="False">
+                    <AccessText x:Name="WelcomeMemo" Margin="7"></AccessText>
+                </ScrollViewer>
                 <ScrollViewer Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto" Margin="5" CanContentScroll="False">
                     
-                    <StackPanel x:Name="DependencyDiagramYAxis" Background="Teal">
-                        <StackPanel x:Name="DependencyDiagramXAxis" Orientation="Horizontal">
-                            <AccessText Text="instr "/>
-                            <AccessText Text="reg1 "/>
-                            <AccessText Text="reg2 "/>
-                            <AccessText Text="reg3 "/>
-                        </StackPanel>
-                        <StackPanel x:Name="DependencyDiagramXAxis2" Orientation="Horizontal">
-                            <AccessText Text="instr "/>
-                            <AccessText Text="reg1 "/>
-                            <AccessText Text="reg2 "/>
-                            <AccessText Text="reg3 "/>
-                        </StackPanel>
+                    <StackPanel x:Name="DependencyDiagramYAxis" Background="Azure">
+                        <Label/>
+                        <TextBlock Text="Hazard Detection:" HorizontalAlignment="Center"
+                                   Margin="3"/>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
