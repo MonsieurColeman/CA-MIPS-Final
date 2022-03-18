@@ -52,17 +52,20 @@
         </Border>
         <Grid DockPanel.Dock="Top" RenderTransformOrigin="0.455,0.51">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="176*"/>
+                <ColumnDefinition Width="24*"/>
                 <ColumnDefinition Width="200*"/>
-                <ColumnDefinition Width="200*"/>
-                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="135*"/>
+                <ColumnDefinition Width="65*"/>
                 <ColumnDefinition Width="47*"/>
-                <ColumnDefinition Width="153*"/>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="103*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
-            <AccessText x:Name="View_label1" Grid.Column="1" HorizontalAlignment="Left" FontSize="14" Text="Output" Margin="75,0,0,0"></AccessText>
-            <AccessText x:Name="View_label2" Grid.Column="2" HorizontalAlignment="Left" FontSize="14" Text="Window" Margin="28,0,0,0"></AccessText>
+            <AccessText x:Name="View_label1" Grid.Column="2" HorizontalAlignment="Left" FontSize="14" Text="Output" Margin="75,0,0,0"></AccessText>
+            <AccessText x:Name="View_label2" Grid.Column="3" HorizontalAlignment="Left" FontSize="14" Text="Window" Margin="28,0,0,0"></AccessText>
         </Grid>
         <Border DockPanel.Dock="Top" Background="Teal">
             <Viewbox Height="5" RenderTransformOrigin="0.5,0.5">
@@ -78,75 +81,87 @@
         </Border>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width=".1*"/>
+                <ColumnDefinition Width="6*"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width=".5*"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="visualGrid" Grid.Column="0" Background="Teal">
+            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" Margin="5" CanContentScroll="False" Grid.Row="0">
+                <Grid x:Name="DependencyDiagram" Background="Teal" ShowGridLines="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="100"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </ScrollViewer>
+            <Grid Grid.Column="2" Background="Black">
+                <Grid.ColumnDefinitions/>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="20*"/>
+                    <RowDefinition Height=".1*"/>
+                    <RowDefinition Height="20*"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="1"/>
-                <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="2"/>
-                <TextBlock Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Text="3"/>
-                <TextBlock Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" Text="4"/>
-                <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" Text="5"/>
-                <TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" Text="6"/>
-                <TextBlock Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center" Text="7"/>
-                <TextBlock Grid.Column="8" HorizontalAlignment="Center" VerticalAlignment="Center" Text="8"/>
-                <TextBlock Grid.Column="9" HorizontalAlignment="Center" VerticalAlignment="Center" Text="9"/>
-                <TextBlock Grid.Column="10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="10"/>
-                <TextBlock Grid.Column="11" HorizontalAlignment="Center" VerticalAlignment="Center" Text="11"/>
-                <TextBlock Grid.Column="12" HorizontalAlignment="Center" VerticalAlignment="Center" Text="12"/>
-                <TextBlock Grid.Column="13" HorizontalAlignment="Center" VerticalAlignment="Center" Text="13"/>
-                <TextBlock Grid.Column="14" HorizontalAlignment="Center" VerticalAlignment="Center" Text="14"/>
-                <TextBlock Grid.Column="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="15"/>
-                <TextBlock Grid.Column="16" HorizontalAlignment="Center" VerticalAlignment="Center" Text="16"/>
-                <TextBlock Grid.Column="17" HorizontalAlignment="Center" VerticalAlignment="Center" Text="17"/>
-                <TextBlock Grid.Column="18" HorizontalAlignment="Center" VerticalAlignment="Center" Text="18"/>
-                <TextBlock Grid.Column="19" HorizontalAlignment="Center" VerticalAlignment="Center" Text="19"/>
-                <TextBlock Grid.Column="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="20"/>
-            </Grid>
-            <WrapPanel x:Name="OutputView" Background="Azure" Focusable="True" MouseLeftButtonDown="canvas_MouseLeftButtonDown" Grid.Column="1" HorizontalAlignment="Stretch">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" UseLayoutRounding="False" Width="{Binding ActualWidth,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=WrapPanel}}">
-                    <TextBlock x:Name="output_textblock" TextWrapping="Wrap" TextAlignment="Left" Margin="10"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" Margin="5" CanContentScroll="False" Grid.Row="0">
+                    <Grid x:Name="NonForwardingDiagram" Background="Teal" ShowGridLines="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
                 </ScrollViewer>
-            </WrapPanel>
-            <StackPanel Grid.Column="2" Background="Teal">
-                <TextBlock x:Name="abc456" Width="100" Height="1000" TextWrapping="Wrap" TextAlignment="Center"/>
-            </StackPanel>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" Margin="5" CanContentScroll="False" Grid.Row="2">
+                    <Grid x:Name="ForwardingDiagram" Background="Teal" ShowGridLines="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="100"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+
+
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+            <Grid Grid.Column="3" Background="Black">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".1*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width=".1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".1*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height=".1*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height=".1*"/>
+                </Grid.RowDefinitions>
+                <WrapPanel x:Name="OutputView2" Background="Azure" Focusable="True" MouseLeftButtonDown="canvas_MouseLeftButtonDown" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" UseLayoutRounding="False" Width="{Binding ActualWidth,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=WrapPanel}}">
+                        <TextBlock x:Name="PipelineTextbox_NF" TextWrapping="Wrap" TextAlignment="Left" Margin="10"/>
+                    </ScrollViewer>
+                </WrapPanel>
+                <WrapPanel x:Name="OutputView" Background="Azure" Focusable="True" MouseLeftButtonDown="canvas_MouseLeftButtonDown" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" UseLayoutRounding="False" Width="{Binding ActualWidth,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=WrapPanel}}">
+                        <TextBlock x:Name="PipelineTextBox_WF" TextWrapping="Wrap" TextAlignment="Left" Margin="10"/>
+                    </ScrollViewer>
+                </WrapPanel>
+            </Grid>
         </Grid>
 
     </DockPanel>

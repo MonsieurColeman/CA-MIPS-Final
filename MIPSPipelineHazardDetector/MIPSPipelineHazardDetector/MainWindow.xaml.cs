@@ -22,7 +22,6 @@ namespace MIPSPipelineHazardDetector
     public partial class MainWindow : Window
     {
         ClientExec exec;
-        static Grid diagram;
 
         public MainWindow()
         {
@@ -58,35 +57,37 @@ namespace MIPSPipelineHazardDetector
             if (!instructionList.Item1)
             {
                 MessageBox.Show(Strings.error_InvalidFile);
-                output_textblock.Text = "";
+                PipelineTextBox_WF.Text = "";
                 return;
             }
             else if (instructionList.Item3)
                 MessageBox.Show(Strings.error_UnrecognizedArguments);
             else
             {
-                output_textblock.Text = exec.RunApplication(instructionList.Item2);
+                //run instructions through pipeline
+                exec.RunApplication(instructionList.Item2);
+
+                //put the instructions in the diagrams
                 string[] ints = Coverter.StringToListCovnerter(fileContent);
-                for(int i = 0; i < 4; i++)
-                {
-                    TextBlock tb = new TextBlock();
-                    tb.Text = ints[i];
-                    tb.Margin = new Thickness(30);
-                    tb.SetValue(Grid.RowProperty, i+1);
-                    tb.SetValue(Grid.ColumnProperty, 0);
-                    tb.HorizontalAlignment = HorizontalAlignment.Center;
-                    tb.VerticalAlignment = VerticalAlignment.Center;
-                    tb.Background = new SolidColorBrush(Colors.White);
-                    visualGrid.Children.Add(tb);
-                }
+                AddInstructionsToCanvas(ints);
             }
+        }
+
+        public void DisplayForwardingPipeline(string s)
+        {
+            PipelineTextBox_WF.Text = s;
+        }
+
+        public void DisplayNoForwardingPipeline(string s)
+        {
+            PipelineTextbox_NF.Text = s;
         }
 
         private void btn_export_Click(object sender, RoutedEventArgs e)
         {
 
             //null check for trying to export empty objects
-            if (output_textblock.Text == "")
+            if (PipelineTextBox_WF.Text == "")
             {
                 MessageBox.Show(Strings.error_NullExport);
                 return;
@@ -96,7 +97,7 @@ namespace MIPSPipelineHazardDetector
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = Strings.textFileExtensionFilter;
             if (saveFileDialog.ShowDialog() == true)
-                FileManager.WriteOutputToTextFile(output_textblock.Text, saveFileDialog.FileName);
+                FileManager.WriteOutputToTextFile(PipelineTextBox_WF.Text, saveFileDialog.FileName);
         }
 
         private void btn_exitApp_Click(object sender, RoutedEventArgs e)
@@ -104,11 +105,14 @@ namespace MIPSPipelineHazardDetector
             System.Windows.Application.Current.Shutdown();
         }
 
-        public void ShowDiagramForFirstFourInstructions(List<List<string>> strings)
+        public void ShowForwardingDiagram(List<List<string>> strings)
         {
+            Grid grid = ForwardingDiagram;
+            AddColumnsToDiagram(5+strings.Count-1, grid);
             int offset = 0;
             for (int i = 0; i < strings.Count; i++) //for each command
             {
+                AddColumnsToDiagram(strings[i].Count - 5 + 1, grid);
                 for (int j = 0; j < strings[i].Count; j++) //for each letter
                 {
                     TextBlock tb = new TextBlock();
@@ -117,12 +121,145 @@ namespace MIPSPipelineHazardDetector
                     tb.SetValue(Grid.ColumnProperty, j + 1 + offset);
                     tb.HorizontalAlignment = HorizontalAlignment.Center;
                     tb.VerticalAlignment = VerticalAlignment.Center;
-                    visualGrid.Children.Add(tb);
+                    grid.Children.Add(tb);
                     
                 }
                 offset++;
                 offset += strings[i].Count-5;
             }
+        }
+
+        public void ShowNonForwardingDiagram(List<List<string>> strings)
+        {
+            Grid diagram = NonForwardingDiagram;
+            AddColumnsToDiagram(5 + strings.Count - 1, diagram);
+            int offset = 0;
+            for (int i = 0; i < strings.Count; i++) //for each command
+            {
+                AddColumnsToDiagram(strings[i].Count - 5 + 1, diagram);
+                for (int j = 0; j < strings[i].Count; j++) //for each letter
+                {
+                    TextBlock tb = new TextBlock();
+                    tb.Text = strings[i][j].ToString();
+                    tb.SetValue(Grid.RowProperty, i + 1);
+                    tb.SetValue(Grid.ColumnProperty, j + 1 + offset);
+                    tb.HorizontalAlignment = HorizontalAlignment.Center;
+                    tb.VerticalAlignment = VerticalAlignment.Center;
+                    diagram.Children.Add(tb);
+
+                }
+                offset++;
+                offset += strings[i].Count - 5;
+            }
+        }
+
+        private void AddColumnsToDiagram(int num, Grid grid)
+        {
+            GridLengthConverter gridLengthConverter = new GridLengthConverter();
+
+            for (int i = 0; i<num; i++)
+            {
+                //define new column
+                ColumnDefinition a = new ColumnDefinition();
+                a.Width = (GridLength)gridLengthConverter.ConvertFrom(50); ;
+
+                //append column to grid
+                grid.ColumnDefinitions.Insert(grid.ColumnDefinitions.Count, a);
+
+                //create textblock
+                TextBlock _s_ = new TextBlock();
+
+                //number the column
+                _s_.Text = (grid.ColumnDefinitions.Count-1).ToString();
+
+                //set num to the top of the column
+                _s_.SetValue(Grid.RowProperty, 0);
+
+                //append column to end
+                _s_.SetValue(Grid.ColumnProperty, grid.ColumnDefinitions.Count-1);
+
+                //send text
+                _s_.HorizontalAlignment = HorizontalAlignment.Center;
+
+                //
+                _s_.VerticalAlignment = VerticalAlignment.Center;
+
+                //
+                grid.Children.Add(_s_);
+            }
+        }
+
+        private void AddRowsToDiagram(int num, Grid grid)
+        {
+            GridLengthConverter gridLengthConverter = new GridLengthConverter();
+
+            for (int i = 0; i < num; i++)
+            {
+                //define new column
+                RowDefinition a = new RowDefinition();
+                a.Height = (GridLength)gridLengthConverter.ConvertFrom(100); ;
+
+                //append column to grid
+                grid.RowDefinitions.Insert(grid.RowDefinitions.Count, a);
+
+                //create textblock
+                TextBlock _s_ = new TextBlock();
+
+                //number the column
+                _s_.Text = grid.RowDefinitions.Count.ToString();
+
+                //set num to the top of the column
+                _s_.SetValue(Grid.RowProperty, grid.RowDefinitions.Count - 1);
+
+                //append row in first column
+                _s_.SetValue(Grid.ColumnProperty, 0);
+
+                //send text
+                _s_.HorizontalAlignment = HorizontalAlignment.Center;
+
+                //
+                _s_.VerticalAlignment = VerticalAlignment.Center;
+
+                //
+                grid.Children.Add(_s_);
+            }
+        }
+
+        private void AddInstructionsToCanvas(string[] ints)
+        {
+            for (int i = 0; i < ints.Length; i++)
+            {
+                if (i > 3) //the grid has 4 rows by default
+                {
+                    AddRowsToDiagram(1, NonForwardingDiagram);
+                    AddRowsToDiagram(1, ForwardingDiagram);
+                }
+
+                //Create a textbox and add it to each diagram
+                NonForwardingDiagram.Children.Add(CreateInstructionTextBox(ints[i], i));
+                ForwardingDiagram.Children.Add(CreateInstructionTextBox(ints[i], i));
+            }
+
+            AddLabelsToDiagram();
+        }
+
+        private void AddLabelsToDiagram()
+        {
+            NonForwardingDiagram.Children.Add(CreateInstructionTextBox("No Forwarding", -1));
+            ForwardingDiagram.Children.Add(CreateInstructionTextBox("Forwarding", -1));
+        }
+
+        private TextBlock CreateInstructionTextBox(string text, int rowNum)
+        {
+            TextBlock tb = new TextBlock();
+            tb.Text = text;
+            tb.Margin = new Thickness(30);
+            tb.SetValue(Grid.RowProperty, rowNum + 1);
+            tb.SetValue(Grid.ColumnProperty, 0);
+            tb.HorizontalAlignment = HorizontalAlignment.Center;
+            tb.VerticalAlignment = VerticalAlignment.Center;
+            tb.Background = new SolidColorBrush(Colors.White);
+            return tb;
         }
 
         private void canvas_MouseLeftButtonDown(object sender, RoutedEventArgs e)

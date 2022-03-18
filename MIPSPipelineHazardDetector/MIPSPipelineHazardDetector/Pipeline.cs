@@ -16,23 +16,21 @@ namespace MIPSPipelineHazardDetector
         public struct PipelineObj
         {
             public InstructionCommand command;
-            int cycle;
             public List<string> str;
 
             public PipelineObj(InstructionCommand ic)
             {
                 command = ic;
-                cycle = __cycle;
                 str = new List<string>() { "F"};
             }
         }
 
-        static int __cycle = 0;
-        static Stack<PipelineObj> __fetchStack = new Stack<PipelineObj>();
-        static Stack<PipelineObj> __DecodeStack = new Stack<PipelineObj>();
-        static Stack<PipelineObj> __ExecuteStack = new Stack<PipelineObj>();
-        static Stack<PipelineObj> __MemoryStack = new Stack<PipelineObj>();
-        static Stack<PipelineObj> __WritebackStack = new Stack<PipelineObj>();
+        int __cycle = 0;
+        Stack<PipelineObj> __fetchStack = new Stack<PipelineObj>();
+        Stack<PipelineObj> __DecodeStack = new Stack<PipelineObj>();
+        Stack<PipelineObj> __ExecuteStack = new Stack<PipelineObj>();
+        Stack<PipelineObj> __MemoryStack = new Stack<PipelineObj>();
+        Stack<PipelineObj> __WritebackStack = new Stack<PipelineObj>();
         public static List<PipelineObj> __output = new List<PipelineObj>();
         public string __state = "";
         public bool __forwardingEnabled = false;
@@ -40,6 +38,13 @@ namespace MIPSPipelineHazardDetector
         public Pipeline(bool forwarding)
         {
             __forwardingEnabled = forwarding;
+            __fetchStack = new Stack<PipelineObj> ();
+            __DecodeStack = new Stack<PipelineObj>();
+            __ExecuteStack = new Stack<PipelineObj>();
+            __MemoryStack = new Stack<PipelineObj>();
+            __WritebackStack = new Stack<PipelineObj>();
+            __output = new List<PipelineObj>();
+            __state = "";
         }
 
         public void StartPipelineWithCommand(InstructionCommand command)
@@ -76,6 +81,7 @@ namespace MIPSPipelineHazardDetector
 
         public void EndPipeline()
         {
+            __DecodeStack.Push(__fetchStack.Pop());
             AdvancePipelineByXCycles(5);
         }
 
@@ -95,7 +101,7 @@ namespace MIPSPipelineHazardDetector
                 //modify string
                 obj.str.Add("W");
                 //add to output for display
-                if (!(__output.Count >= 4) && obj.command.inst_.GetKey() != Strings.outputText_stall && obj.command.inst_.GetKey() != Strings.outputText_empty)
+                if (obj.command.inst_.GetKey() != Strings.outputText_stall && obj.command.inst_.GetKey() != Strings.outputText_empty)
                     __output.Add(obj);
             }
             if (__MemoryStack.Count > 0)
@@ -132,17 +138,21 @@ namespace MIPSPipelineHazardDetector
              */
             if (stall)
             {
-                //pop to modify pipeline object
-                obj = __fetchStack.Peek();
-                //modify string
-                obj.str.Add("S");
-                //add to next stage of pipeline
-                __DecodeStack.Push(new PipelineObj(InstructionCommand.Stall()));
+                if (__fetchStack.Count > 0)
+                {
+                    //pop to modify pipeline object
+                    obj = __fetchStack.Peek();
+                    //modify string
+                    obj.str.Add("S");
+                    //add to next stage of pipeline
+                    __DecodeStack.Push(new PipelineObj(InstructionCommand.Stall()));
+                }
             }
             else
             {
-                //add to next stage of pipeline
-                __DecodeStack.Push(__fetchStack.Pop());
+                if (__fetchStack.Count > 0)
+                    //add to next stage of pipeline
+                    __DecodeStack.Push(__fetchStack.Pop());
             }
 
             //StateOfPipeline();
