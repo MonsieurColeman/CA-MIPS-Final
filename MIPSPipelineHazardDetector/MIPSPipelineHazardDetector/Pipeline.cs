@@ -31,7 +31,8 @@ namespace MIPSPipelineHazardDetector
         Stack<PipelineObj> __ExecuteStack = new Stack<PipelineObj>();
         Stack<PipelineObj> __MemoryStack = new Stack<PipelineObj>();
         Stack<PipelineObj> __WritebackStack = new Stack<PipelineObj>();
-        public static List<PipelineObj> __output = new List<PipelineObj>();
+        //public static List<PipelineObj> __output = new List<PipelineObj>();
+        public List<PipelineObj> __output = new List<PipelineObj>();
         public string __state = "";
         public bool __forwardingEnabled = false;
 
@@ -217,7 +218,8 @@ namespace MIPSPipelineHazardDetector
 
         private void StateOfPipelineStart()
         {
-            UpdatePipelineState("This is the start of the Pipeline");
+            string s = (__forwardingEnabled) ? " (Forwarding Enabled)" : "";
+            UpdatePipelineState(String.Format("This is the start of the{0} Pipeline",s));
         }
 
         private void UpdatePipelineState(string s)

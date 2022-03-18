@@ -249,6 +249,11 @@ namespace MIPSPipelineHazardDetector
             ForwardingDiagram.Children.Add(CreateInstructionTextBox("Forwarding", -1));
         }
 
+        public void ManifestHazards(List<HazardObject> objects)
+        {
+            
+        }
+
         private TextBlock CreateInstructionTextBox(string text, int rowNum)
         {
             TextBlock tb = new TextBlock();
