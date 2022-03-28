@@ -110,7 +110,7 @@ namespace MIPSPipelineHazardDetector
         public void ShowForwardingDiagram(List<List<string>> strings)
         {
             Grid grid = ForwardingDiagram;
-            AddColumnsToDiagram(5+strings.Count-1, grid);
+            AddColumnsToDiagram(5, grid);
             int offset = 0;
             for (int i = 0; i < strings.Count; i++) //for each command
             {
@@ -134,7 +134,7 @@ namespace MIPSPipelineHazardDetector
         public void ShowNonForwardingDiagram(List<List<string>> strings)
         {
             Grid diagram = NonForwardingDiagram;
-            AddColumnsToDiagram(5 + strings.Count - 1, diagram);
+            AddColumnsToDiagram(5, diagram);
             int offset = 0;
             for (int i = 0; i < strings.Count; i++) //for each command
             {
