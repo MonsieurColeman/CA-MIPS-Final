@@ -35,6 +35,10 @@ namespace MIPSPipelineHazardDetector
 			List<List<string>> diagramStrings_F = GetDiagramFromPipeline(ForwardingPipeline);
 			mainWindow.ShowForwardingDiagram(diagramStrings_F);
 			mainWindow.DisplayForwardingPipeline(ForwardingPipeline.__state);
+
+			//export
+			mainWindow.outputForwarding = diagramStrings_F;
+			mainWindow.outputNonforwarding = diagramStrings_NF;
 		}
 		
 		private Pipeline RunPipeline(bool forwarding, Queue<InstructionCommand> queue)

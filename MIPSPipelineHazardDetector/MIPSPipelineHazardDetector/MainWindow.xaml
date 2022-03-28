@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:MIPSPipelineHazardDetector"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowState="Maximized"
         WindowStyle="None">
     <DockPanel>
 

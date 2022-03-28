@@ -68,6 +68,35 @@ namespace MIPSPipelineHazardDetector
             return stalls;
         }
 
+        public static (int,int) StallDeterminerAdvanced(bool forwarding, Instruction newCommand, Instruction command, int offset = 1)
+        {
+            int stalls = 0;
+
+            //item 1 = tuple timing for when data is needed, item 2 = tuple timing for when data is available
+            ((int, int), (int, int)) needyCommandTuple_temp = InstructionComparer(forwarding, newCommand);
+            ((int, int), (int, int)) usingCommandTuple = InstructionComparer(forwarding, command);
+
+            //Add the offset to the timing, because two instructions cannot start at the same time within a pipeline
+            ((int, int), (int, int)) needyCommandTuple =
+                ((needyCommandTuple_temp.Item1.Item1 + 1, needyCommandTuple_temp.Item1.Item2),
+                (needyCommandTuple_temp.Item2.Item1, needyCommandTuple_temp.Item2.Item2));
+
+            //if the data will be available before, or when, the next command needs it, we do not need to stall
+            if ((needyCommandTuple.Item1.Item1 > usingCommandTuple.Item2.Item1) || (needyCommandTuple.Item1 == needyCommandTuple.Item2))
+                return (0,0);
+
+            //stalls = when data is avilable - when data is needed
+            stalls = usingCommandTuple.Item2.Item1 - needyCommandTuple.Item1.Item1;
+
+            //if the first command needs data at the beginning of the stage
+            //but the data cant become available until the end, add 1 stall
+            if (needyCommandTuple.Item1.Item2 < usingCommandTuple.Item2.Item2)
+                stalls++;
+
+            //returns the stage that wouldnt get the stage and the number of stalls needed
+            return (needyCommandTuple_temp.Item1.Item1, stalls);
+        }
+
         public static ((int,int),(int,int)) InstructionComparer(bool forwarding, Instruction i)
         {
             (int, int) needed = (0,0);

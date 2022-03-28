@@ -22,6 +22,8 @@ namespace MIPSPipelineHazardDetector
     public partial class MainWindow : Window
     {
         ClientExec exec;
+        public List<List<string>> outputNonforwarding;
+        public List<List<string>> outputForwarding;
 
         public MainWindow()
         {
@@ -95,11 +97,34 @@ namespace MIPSPipelineHazardDetector
                 return;
             }
 
+            //
+            string first = "This is the output (without spacing) of the given instructions\n" +
+                "in a pipeline that does not have a forwarding unit:\n" + GetOutputString(outputNonforwarding);
+            string space = "\n\n---------------------------------\n\n";
+            string second = "This is the output (without spacing) of the given instructions\n" +
+                "in a pipeline that has a forwarding unit:\n" + GetOutputString(outputForwarding);
+            string output = first+space+second;
+
             //Open file dialog and save json to given filepath
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = Strings.textFileExtensionFilter;
             if (saveFileDialog.ShowDialog() == true)
-                FileManager.WriteOutputToTextFile(PipelineTextBox_WF.Text, saveFileDialog.FileName);
+                FileManager.WriteOutputToTextFile(output, saveFileDialog.FileName);
+        }
+
+        private string GetOutputString(List<List<string>> outputList)
+        {
+            string culm = "";
+            for (int i = 0; i < outputList.Count; i++)
+            {
+                string commandstring = "";
+                for (int j = 0; j < outputList[i].Count; j++)
+                {
+                    commandstring += outputList[i][j];
+                }
+                culm += commandstring + "\n";
+            }
+            return culm;
         }
 
         private void btn_exitApp_Click(object sender, RoutedEventArgs e)
@@ -111,23 +136,51 @@ namespace MIPSPipelineHazardDetector
         {
             Grid grid = ForwardingDiagram;
             AddColumnsToDiagram(5, grid);
+            int d_offset = 0;
             int offset = 0;
             for (int i = 0; i < strings.Count; i++) //for each command
             {
-                AddColumnsToDiagram(strings[i].Count - 5 + 1, grid);
-                for (int j = 0; j < strings[i].Count; j++) //for each letter
+                AddColumnsToDiagram(strings[i].Count - 5, grid);
+
+                if(i == 0)
                 {
-                    TextBlock tb = new TextBlock();
-                    tb.Text = strings[i][j].ToString();
-                    tb.SetValue(Grid.RowProperty, i + 1);
-                    tb.SetValue(Grid.ColumnProperty, j + 1 + offset);
-                    tb.HorizontalAlignment = HorizontalAlignment.Center;
-                    tb.VerticalAlignment = VerticalAlignment.Center;
-                    grid.Children.Add(tb);
-                    
+                    for (int j = 0; j < strings[i].Count; j++) //for each letter
+                    {
+                        TextBlock tb = new TextBlock();
+                        tb.Text = strings[i][j].ToString();
+                        tb.SetValue(Grid.RowProperty, i + 1);
+                        tb.SetValue(Grid.ColumnProperty, j + 1 + offset);
+                        tb.HorizontalAlignment = HorizontalAlignment.Center;
+                        tb.VerticalAlignment = VerticalAlignment.Center;
+                        grid.Children.Add(tb);
+
+                        if (strings[i][j].ToString() == "D")
+                        {
+                            d_offset = j + 1 + offset;
+                        }
+                    }
+                }
+                else
+                {
+                    int starting = d_offset;
+                    for (int j = 0; j < strings[i].Count; j++) //for each letter
+                    {
+                        TextBlock tb = new TextBlock();
+                        tb.Text = strings[i][j].ToString();
+                        tb.SetValue(Grid.RowProperty, i + 1);
+                        tb.SetValue(Grid.ColumnProperty, starting++);
+                        tb.HorizontalAlignment = HorizontalAlignment.Center;
+                        tb.VerticalAlignment = VerticalAlignment.Center;
+                        grid.Children.Add(tb);
+
+                        if (strings[i][j].ToString() == "D")
+                        {
+                            d_offset = j + 1 + offset;
+                        }
+                    }
                 }
                 offset++;
-                offset += strings[i].Count-5;
+                //offset += strings[i].Count-5;
             }
         }
 
@@ -195,7 +248,7 @@ namespace MIPSPipelineHazardDetector
         {
             GridLengthConverter gridLengthConverter = new GridLengthConverter();
 
-            for (int i = 0; i < num; i++)
+            for (int i = 0; i < num+1; i++)
             {
                 //define new column
                 RowDefinition a = new RowDefinition();

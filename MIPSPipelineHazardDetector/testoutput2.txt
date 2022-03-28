@@ -1,0 +1,19 @@
+This is the output (without spacing) of the given instructions
+in a pipeline that does not have a forwarding unit:
+FDXMW
+FSSDXMW
+FSSDXMW
+FDXMW
+FDXMW
+
+
+---------------------------------
+
+This is the output (without spacing) of the given instructions
+in a pipeline that has a forwarding unit:
+FDXMW
+FDSXMW
+FSDXMW
+FDXMW
+FDXMW
+
