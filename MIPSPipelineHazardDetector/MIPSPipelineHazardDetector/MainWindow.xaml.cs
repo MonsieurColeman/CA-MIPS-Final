@@ -140,7 +140,7 @@ namespace MIPSPipelineHazardDetector
             int offset = 0;
             for (int i = 0; i < strings.Count; i++) //for each command
             {
-                AddColumnsToDiagram(strings[i].Count - 5, grid);
+                AddColumnsToDiagram(strings[i].Count - 5+1, grid);
 
                 if(i == 0)
                 {
