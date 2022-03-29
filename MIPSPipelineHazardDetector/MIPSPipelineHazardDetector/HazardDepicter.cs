@@ -83,7 +83,8 @@ namespace MIPSPipelineHazardDetector
 				command.hazards = true;
 				newCommand.hazards = true;
             }
-			if (command.__rs == newCommand.__rt && newCommand._inst.ToString() != "sw")
+			//if (command.__rs == newCommand.__rt && newCommand._inst.ToString() != "sw")
+			if (command.__rs == newCommand.__rt)
 			{
 				newCommand.rt__Hazard = HazardType.data;
 				command.rs__Hazard = HazardType.data;

@@ -29,7 +29,8 @@ namespace MIPSPipelineHazardDetector
 
             //if new command tries to read from old command, it is a potential data hazard
             if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_ && newCommand.inst_.GetKey() != "lw")
-                return true;
+                //if (command.rs_ == newCommand.rt_ || command.rs_ == newCommand.rd_)
+                    return true;
 
             //if store command, the rs_ section is a read, not a write
             if(newCommand.inst_.GetKey() == "sw" && command.rs_ == newCommand.rs_)
